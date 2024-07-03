@@ -9,15 +9,19 @@ base_directory = "../files"
 
 def process_files_in_directory(tei_directory, pdf_directory, output_directory, zoom=2):
 
-    for file in os.listdir(tei_directory):
+    for i, file in enumerate(os.listdir(tei_directory)):
+        print(f"Processing file {file}...")
+
         tei_file = os.path.join(tei_directory, file)
         pdf_path = os.path.join(pdf_directory, file.replace(".tei.xml", ""))
+        filename = file.replace(".pdf.tei.xml", "")
+
         elements_with_images = extract_elements_with_images_from_pdf(tei_file, pdf_path)
-        save_images_by_elements(elements_with_images, os.path.join(output_directory, file.replace(".pdf.tei.xml", "")))
+        save_images_by_elements(elements_with_images, os.path.join(output_directory, filename, 'images'), pdf_id=i)
 
         tables = extract_tables_from_tei(tei_file)
-        output_file = os.path.join(output_directory, file.replace(".tei.xml", "_tables.xml"))
-        save_tables_to_xml(tables, output_file)
+        save_tables_to_xml(tables, os.path.join(output_directory, filename, 'tables'), pdf_id=i)
+
 
 
 if __name__ == "__main__":
