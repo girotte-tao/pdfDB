@@ -48,12 +48,12 @@ def extract_value(parsed_data, tag, attribute=None):
 
 
 # 示例调用
-xml_file = "../files/tei/2021 Zhang and Pan (AiC) MCDA for TCLP.pdf.tei.xml"
-structure_tag = "figure"  # 可以替换为任何你想处理的标签
-elements_data = parse_xml_with_structure(xml_file, structure_tag)
-
-for element in elements_data:
-    print(element)
+# xml_file = "../files/tei/2021 Zhang and Pan (AiC) MCDA for TCLP.pdf.tei.xml"
+# structure_tag = "figure"  # 可以替换为任何你想处理的标签
+# elements_data = parse_xml_with_structure(xml_file, structure_tag)
+#
+# for element in elements_data:
+#     print(element)
     # print("Value of 'coords' tag:", extract_value(element, 'graphic', 'coords'))
 
 

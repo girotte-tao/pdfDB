@@ -1,5 +1,5 @@
 import os
-
+import re
 import fitz  # PyMuPDF
 from PIL import Image
 from extract_element_info import parse_xml_with_structure, extract_value
@@ -67,7 +67,7 @@ def save_images(images, output_dir):
         image.save(os.path.join(output_dir, f"image_{i}.png"))
 
 
-def save_images_by_elements(elements, output_dir):
+def save_images_by_elements(elements, output_dir, pdf_id=0):
     """
     Saves the extracted images to the specified output directory.
 
@@ -78,8 +78,30 @@ def save_images_by_elements(elements, output_dir):
     os.makedirs(output_dir, exist_ok=True)
 
     for i, element in enumerate(elements):
-        element['image'].save(os.path.join(output_dir, f"image_{element['head']}_{element['label']}.png"))
+        first_figure_identifier = extract_first_figure_identifier(element['head'])
+        if first_figure_identifier:
+            element['image'].save(os.path.join(output_dir, f"{pdf_id}_{first_figure_identifier}.jpg"))
 
+
+def clean_text(text):
+    # 去除空格、点等特殊符号，但保留字母和数字
+    return re.sub(r'[\s\.\-]+', '', text)
+
+
+def extract_first_figure_identifier(text):
+    if not text:
+        return None
+
+    # 清理文本
+    cleaned_text = clean_text(text)
+
+    # 提取以 fig 或 figure 开头的第一个匹配项，忽略大小写
+    match = re.search(r'(fig|figure)(\d+)', cleaned_text, re.IGNORECASE)
+
+    if match:
+        return match.group(0).lower()
+    else:
+        return None
 
 
 def extract_images_from_pdf_by_coords(pdf_path, coords_list, zoom=2):
@@ -141,13 +163,13 @@ def extract_elements_with_images_from_pdf(xml_file, pdf_path, structure_tag='fig
 
 
 # Example usage
-tei_file = "../files/tei/2021 Zhang and Pan (AiC) MCDA for TCLP.pdf.tei.xml"
-pdf_path = "../files/pdf/2021 Zhang and Pan (AiC) MCDA for TCLP.pdf"
-coords_str = "10,37.59,526.80,514.12,43.44"
-output_image_path = "../files/extracted_image.png"
-zoom_level = 4  # Adjust the zoom level to increase resolution
-
-save_image(extract_image_from_pdf_by_coord(pdf_path, coords_str, zoom_level), output_image_path)
+# tei_file = "../files/tei/2021 Zhang and Pan (AiC) MCDA for TCLP.pdf.tei.xml"
+# pdf_path = "../files/pdf/2021 Zhang and Pan (AiC) MCDA for TCLP.pdf"
+# coords_str = "10,37.59,526.80,514.12,43.44"
+# output_image_path = "../files/extracted_image.png"
+# zoom_level = 4  # Adjust the zoom level to increase resolution
+#
+# save_image(extract_image_from_pdf_by_coord(pdf_path, coords_str, zoom_level), output_image_path)
 # elements_with_images = extract_elements_with_images_from_pdf(tei_file, pdf_path)
 # save_images(images, "../files/extracted_images")
 
