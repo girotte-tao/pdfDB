@@ -39,7 +39,7 @@ def clean_text(text):
 def extract_table_identifier(element):
     # 查找<head>标签
     head_element = element.find(".//{http://www.tei-c.org/ns/1.0}head")
-    if head_element is not None:
+    if head_element is not None and head_element.text:
         head_text = head_element.text
 
         # 清理文本并提取Table标识符
